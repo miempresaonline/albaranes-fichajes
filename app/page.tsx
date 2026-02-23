@@ -100,12 +100,23 @@ export default function OperatorDashboard() {
                 </CardContent>
             </Card>
 
-            <Link href="/fichaje" className="block w-full">
-                <Button size="lg" variant="outline" className="w-full h-14 text-emerald-700 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 font-bold flex gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                    Fichar Jornada (Entrada/Salida)
-                </Button>
-            </Link>
+            <Card className="bg-gradient-to-br from-[#0c1812] to-[#102219] text-white border border-[#13ec80]/20 shadow-lg shadow-[#13ec80]/10 overflow-hidden relative">
+                {/* Decorative glow */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#13ec80]/20 rounded-full blur-2xl"></div>
+                <CardContent className="pt-6 flex flex-col items-center text-center space-y-4 relative z-10">
+                    <Link href="/fichaje" className="w-full block">
+                        <div className="w-full">
+                            <Button size="lg" className="w-full h-16 text-lg font-bold bg-[#13ec80] hover:bg-[#10d470] text-[#0c1812] shadow-md shadow-[#13ec80]/20 flex gap-2 transition-all active:scale-[0.98]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                                Fichar Jornada
+                            </Button>
+                        </div>
+                    </Link>
+                    <p className="text-[#13ec80]/80 text-sm font-medium">
+                        Control horario de entrada y salida
+                    </p>
+                </CardContent>
+            </Card>
 
             {/* Compact Sync Status */}
             <div
