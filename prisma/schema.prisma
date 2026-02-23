@@ -169,12 +169,89 @@ model User {
   email     String?
   role      Role     @default(GRUISTA)
   isActive  Boolean  @default(true)
+  
+  empresaId String?
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  
+  pin       String?
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  albaranes Albaran[]
+  
+  albaranes   Albaran[]
+  fichajes    Fichaje[]
+  auditorias  AuditoriaFichaje[]
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
+  JEFE_EMPRESA
   GRUISTA
+  TRABAJADOR
+}
+
+model Empresa {
+  id        String   @id @default(cuid())
+  nombre    String
+  cif       String?
+  direccion String?
+  email     String?
+  telefono  String?
+  isActive  Boolean  @default(true)
+  
+  usuarios  User[]
+  horarios  Horario[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Fichaje {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  tipo        TipoFichaje
+  timestamp   DateTime
+  
+  geoLat      Float?
+  geoLng      Float?
+  dispositivo String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum TipoFichaje {
+  ENTRADA
+  SALIDA
+  PAUSA_INICIO
+  PAUSA_FIN
+}
+
+model AuditoriaFichaje {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  fichajeId   String?
+  
+  accion      String
+  motivo      String
+  datosAnt    String?  @db.Text
+  datosNuevos String?  @db.Text
+  
+  timestamp   DateTime @default(now())
+}
+
+model Horario {
+  id          String   @id @default(cuid())
+  nombre      String
+  empresaId   String?
+  empresa     Empresa?  @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  
+  diasDef     String   @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

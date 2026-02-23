@@ -1,7 +1,7 @@
 import { getSession, logout } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Map, FileText, AlertTriangle, LogOut, Settings, Calendar } from 'lucide-react';
+import { LayoutDashboard, Users, Map, FileText, AlertTriangle, LogOut, Settings, Calendar, Building2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default async function AdminLayout({
@@ -11,7 +11,7 @@ export default async function AdminLayout({
 }) {
     const session = await getSession();
 
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !['ADMIN', 'SUPER_ADMIN', 'JEFE_EMPRESA'].includes(session.role)) {
         redirect('/admin/login');
     }
 
@@ -28,15 +28,27 @@ export default async function AdminLayout({
 
                 <nav className="flex-1 p-4 space-y-1">
                     <NavLink href="/admin" icon={<LayoutDashboard />} label="Dashboard" />
-                    <div className="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Gestión</div>
-                    <NavLink href="/admin/users" icon={<Users />} label="Usuarios" />
-                    <NavLink href="/admin/municipalities" icon={<Map />} label="Ayuntamientos y Tarifas" />
-                    <NavLink href="/admin/services" icon={<TruckIcon />} label="Servicios" />
-                    <NavLink href="/admin/infracciones" icon={<AlertTriangle />} label="Infracciones" />
-                    <div className="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Configuración</div>
-                    <NavLink href="/admin/settings/festivos" icon={<Calendar />} label="Días Festivos" />
+
+                    {['ADMIN', 'SUPER_ADMIN'].includes(session.role) && (
+                        <>
+                            <div className="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Gestión</div>
+                            <NavLink href="/admin/users" icon={<Users />} label="Usuarios" />
+                            {session.role === 'SUPER_ADMIN' && (
+                                <NavLink href="/admin/empresas" icon={<Building2 />} label="Empresas" />
+                            )}
+                            <NavLink href="/admin/municipalities" icon={<Map />} label="Ayuntamientos y Tarifas" />
+                            <NavLink href="/admin/services" icon={<TruckIcon />} label="Servicios" />
+                            <NavLink href="/admin/infracciones" icon={<AlertTriangle />} label="Infracciones" />
+                            <div className="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Configuración</div>
+                            <NavLink href="/admin/settings/festivos" icon={<Calendar />} label="Días Festivos" />
+                        </>
+                    )}
+
                     <div className="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operaciones</div>
-                    <NavLink href="/admin/tickets" icon={<FileText />} label="Albaranes" />
+                    {['ADMIN', 'SUPER_ADMIN'].includes(session.role) && (
+                        <NavLink href="/admin/tickets" icon={<FileText />} label="Albaranes Grúas" />
+                    )}
+                    <NavLink href="/admin/fichajes" icon={<Clock />} label="Registro de Fichajes" />
                 </nav>
 
                 <div className="p-4 border-t border-slate-700">

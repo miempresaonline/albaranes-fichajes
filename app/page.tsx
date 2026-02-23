@@ -100,6 +100,13 @@ export default function OperatorDashboard() {
                 </CardContent>
             </Card>
 
+            <Link href="/fichaje" className="block w-full">
+                <Button size="lg" variant="outline" className="w-full h-14 text-emerald-700 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 font-bold flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                    Fichar Jornada (Entrada/Salida)
+                </Button>
+            </Link>
+
             {/* Compact Sync Status */}
             <div
                 onClick={handleManualSync}
