@@ -1,0 +1,17 @@
+{
+    "name": "Gestión de Grúas Municipal",
+    "short_name": "Grúas",
+    "description": "Plataforma de gestión de retiradas de vehículos",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#000000",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "192x192 512x512",
+            "type": "image/png"
+        }
+    ]
+}

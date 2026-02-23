@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Municipio {
+  id        String   @id @default(cuid())
+  nombre    String
+  cif       String?
+  direccion String?
+  provincia String?
+  isActive  Boolean  @default(true)
+  email     String?
+  telefono  String?
+  
+  // Pricing Schedule
+  horarioDiurnoInicio String @default("08:00") // "HH:mm"
+  horarioDiurnoFin    String @default("20:00") // "HH:mm" - Default generic
+  
+  // Relations
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tarifas   Tarifa[]
+  albaranes Albaran[]
+  festivos  Festivo[] // Local holidays
+}
+
+model Festivo {
+  id          String   @id @default(cuid())
+  nombre      String   // "Navidad", "Patron Local"
+  fecha       DateTime // Only Day/Month/Year matters
+  esGlobal    Boolean  @default(false) // If true, applies to all
+  
+  municipioId String?
+  municipio   Municipio? @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Servicio {
+  id          String   @id @default(cuid())
+  nombre      String   // "Arrastre", "Enganche"
+  descripcion String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tarifas     Tarifa[]
+  albaranes   Albaran[]
+}
+
+model Infraccion {
+  id          String   @id @default(cuid())
+  codigo      String
+  descripcion String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  albaranes   Albaran[]
+}
+
+model Tarifa {
+  id           String      @id @default(cuid())
+  municipioId  String
+  servicioId   String
+  
+  precioDia    Decimal     @default(0)
+  precioNoche  Decimal     @default(0)
+  precioFestivo Decimal    @default(0)
+  
+  precioMoto   Decimal     @default(0) // Special price for motos
+  precioMotoFestivo Decimal @default(0) // Special price for motos (Night/Holiday)
+  precioPeso   Decimal     @default(0) // Special price for >1.5T
+
+  precioPesoFestivo Decimal @default(0) // Special price for >1.5T (Night/Holiday)
+
+  municipio    Municipio   @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  servicio     Servicio    @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([municipioId, servicioId])
+}
+
+model Marca {
+  id        String    @id @default(cuid())
+  nombre    String    @unique
+  modelos   Modelo[]
+}
+
+model Modelo {
+  id        String    @id @default(cuid())
+  nombre    String
+  marcaId   String
+  marca     Marca     @relation(fields: [marcaId], references: [id])
+  
+  @@unique([marcaId, nombre])
+}
+
+model Albaran {
+  id              String      @id @default(cuid()) // Server ID
+  tempId          String?     // Client-side ID for sync matching
+  numeroAlbaran   Int?        @unique @default(autoincrement())
+  
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  
+  municipioId     String
+  municipio       Municipio   @relation(fields: [municipioId], references: [id])
+  
+  servicioId      String
+  servicio        Servicio    @relation(fields: [servicioId], references: [id])
+  
+  infraccionId    String?
+  infraccion      Infraccion? @relation(fields: [infraccionId], references: [id])
+
+  calle           String?
+  ciudad          String?
+  geoLat          Float?
+  geoLng          Float?
+
+  fechaInicio     DateTime
+  fechaFin        DateTime?
+
+  policiaPlaca    String?
+  policiaFirma    String?     // Base64 or URL
+
+  estado          String      @default("PENDIENTE") // PENDIENTE, SINCRONIZADO, FACTURADO
+  
+  vehiculos       VehiculoRetirado[]
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model VehiculoRetirado {
+  id              String      @id @default(cuid())
+  albaranId       String
+  albaran         Albaran     @relation(fields: [albaranId], references: [id], onDelete: Cascade)
+  
+  matricula       String
+  marca           String?     // Denormalized for easier reporting if master data changes
+  modelo          String?
+  
+  esMoto          Boolean     @default(false)
+  esSobrepeso     Boolean     @default(false)
+  
+  fotos           Foto[]
+}
+
+model Foto {
+  id                 String           @id @default(cuid())
+  vehiculoRetiradoId String
+  vehiculoRetirado   VehiculoRetirado @relation(fields: [vehiculoRetiradoId], references: [id], onDelete: Cascade)
+  url                String
+// ... existing fields ...
+  tipo               String?          // "FRONTAL", "TRASERA", etc.
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String?
+  email     String?
+  role      Role     @default(GRUISTA)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  albaranes Albaran[]
+}
+
+enum Role {
+  ADMIN
+  GRUISTA
+}

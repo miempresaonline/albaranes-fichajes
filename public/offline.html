@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin Conexión - Gruas Municipal</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8fafc;
+            color: #0f172a;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .icon {
+            background-color: #e2e8f0;
+            padding: 24px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0 0 16px 0;
+            font-size: 24px;
+        }
+
+        p {
+            margin: 0 0 24px 0;
+            color: #64748b;
+        }
+
+        button {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+    </div>
+    <h1>Sin Conexión</h1>
+    <p id="msg">No tienes acceso a internet. La app no puede cargar.</p>
+    <button id="retryBtn">Reintentar</button>
+    <div id="status" style="margin-top: 10px; font-size: 12px; color: #94a3b8;"></div>
+
+    <script>
+        const btn = document.getElementById('retryBtn');
+        const msg = document.getElementById('msg');
+        const status = document.getElementById('status');
+
+        function checkConnection() {
+            status.textContent = 'Comprobando red...';
+            if (navigator.onLine) {
+                status.textContent = 'Online detectado. Recargando...';
+                window.location.reload();
+            } else {
+                status.textContent = 'Sigues offline.';
+                msg.textContent = 'Sigues sin conexión. Conéctate a WiFi o Datos y pulsa Reintentar.';
+            }
+        }
+
+        btn.addEventListener('click', checkConnection);
+        window.addEventListener('online', checkConnection);
+    </script>
+</body>
+
+</html>
