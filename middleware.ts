@@ -17,8 +17,9 @@ export async function middleware(req: NextRequest) {
         const token = req.cookies.get('auth_token')?.value;
         const session = token ? await verifyToken(token) : null;
 
-        // Check if user is authenticated and is ADMIN
-        if (!session || session.role !== 'ADMIN') {
+        // Check if user is authenticated and has a valid admin role
+        const validRoles = ['ADMIN', 'SUPER_ADMIN', 'JEFE_EMPRESA'];
+        if (!session || !validRoles.includes(session.role)) {
             const loginUrl = new URL('/admin/login', req.url);
             return NextResponse.redirect(loginUrl);
         }
