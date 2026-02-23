@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 export default async function EmpresasPage() {
     const session = await getSession();
 
-    if (!session || session.role !== 'SUPER_ADMIN') {
+    if (!session || !['ADMIN', 'SUPER_ADMIN'].includes(session.role)) {
         redirect('/admin');
     }
 
