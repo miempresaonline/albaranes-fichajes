@@ -163,8 +163,8 @@ function NewTicketForm() {
         const normalizedCity = normalize(cityName);
 
         const match = municipios.find((m: any) =>
-            normalize(m.nombre).includes(normalizedCity) ||
-            normalizedCity.includes(normalize(m.nombre))
+            normalize(m.nombre || '').includes(normalizedCity) ||
+            normalizedCity.includes(normalize(m.nombre || ''))
         );
 
         if (match) {
@@ -614,8 +614,22 @@ function NewTicketForm() {
 }
 
 export default function NewTicketPage() {
+    const [isMounted, setIsMounted] = useState(false);
+    
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-slate-50">
+                <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+            </div>
+        );
+    }
+
     return (
-        <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>}>
+        <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-blue-600" /></div>}>
             <NewTicketForm />
         </Suspense>
     );
